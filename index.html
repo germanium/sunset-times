@@ -23,7 +23,7 @@ body {
 
 </style>
 <body>
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="d3/d3.v3.js"></script>
 <script>
 
 var parseDate = d3.time.format("%d-%b-%y").parse;
@@ -45,17 +45,19 @@ var x = d3.time.scale()
     .domain(d3.extent(data, function(d) { return d.Date; }));
 
 var y = d3.time.scale()
-    .range([height, 0])
-    .domain( [d3.min(data, function(d){return d.Sunrise;}), 
-	      d3.max(data, function(d){return d.Sunset;})] );
+	.range([height, 0])
+	.domain( [new Date(1900,0,1,0,0), 
+		  new Date(1900,0,1,24,0)] );
 
 var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
+	.scale(x)
+	.orient("bottom");
 
 var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
+	.scale(y)
+	.ticks(24)
+	//.tickFormat(24)
+	.orient("left");
 
 var area = d3.svg.area()
     .x(function(d) { return x(d.Date); })
