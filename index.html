@@ -14,8 +14,16 @@ body {
   stroke-width: 2;
 }
 
-.area {
+.areaDawn {
   fill: steelblue;
+}
+
+.areaDay {
+  fill: yellow;
+}
+
+.areaDusk {
+  fill: blue;
 }
 
 </style>
@@ -26,53 +34,71 @@ body {
 var parseDate = d3.time.format("%d-%b-%y").parse;
 var parseHour = d3.time.format("%I:%M %p").parse;
 
+var margin = {top: 20, right: 30, bottom: 40, left: 80},
+width = 960 - margin.left - margin.right,
+height = 500 - margin.top - margin.bottom;
+
+var x = d3.time.scale()
+    .range([0, width]);
+    
+var y = d3.time.scale()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .tickFormat(d3.time.format("%b"))
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .ticks(6)
+    .tickSubdivide(2)
+    .tickFormat(d3.time.format("%I %p"))
+    .orient("left");
+
+var areaDawn = d3.svg.area()
+    .x(function(d) { return x(d.Date); })
+    .y1(function(d) { return y(d.Sunrise); });
+
+var areaDay = d3.svg.area()
+    .x(function(d) { return x(d.Date); })
+    .y0(function(d) { return y(d.Sunrise); })
+    .y1(function(d) { return y(d.Sunset); });
+
+var areaDusk = d3.svg.area()
+    .x(function(d) { return x(d.Date); })
+    .y1(function(d) { return y(d.Sunset); });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 d3.csv("times.csv", function(error, data) {
-    data.forEach(function(d) {
+    data.forEach( function(d) {
 	d.Date = parseDate(d.Date);
 	d.Sunrise = parseHour(d.Sunrise);	
 	d.Sunset = parseHour(d.Sunset);
     });
 
-var margin = {top: 20, right: 30, bottom: 40, left: 80},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
-
-var x = d3.time.scale()
-	.range([0, width])
-	.domain(d3.extent(data, function(d) { return d.Date; }));
-
-var y = d3.time.scale()
-	.range([height, 0])
-	.domain( [new Date(1900,0,1,0,0), 
-		  new Date(1900,0,1,24,0)] );
-
-var xAxis = d3.svg.axis()
-	.scale(x)
-	.tickFormat(d3.time.format("%b"))
-	.orient("bottom");
-
-var yAxis = d3.svg.axis()
-	.scale(y)
-	.ticks(6)
-	.tickSubdivide(2)
-	.tickFormat(d3.time.format("%I %p"))
-	.orient("left");
-
-var area = d3.svg.area()
-	.x(function(d) { return x(d.Date); })
-	.y0(function(d) { return y(d.Sunrise); })
-	.y1(function(d) { return y(d.Sunset); });
-
-var svg = d3.select("body").append("svg")
-	.attr("width", width + margin.left + margin.right)
-	.attr("height", height + margin.top + margin.bottom)
-	.append("g")
-	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    x.domain(d3.extent(data, function(d) { return d.Date; }));
+    y.domain( [new Date(1900,0,1,0,0), new Date(1900,0,1,24,0)] );
 
     svg.append("path")
 	.datum(data)
-	.attr("class", "area")
-	.attr("d", area);
+	.attr("class", "areaDawn")
+	.attr("d", areaDawn);
+
+    svg.append("path")
+	.datum(data)
+	.attr("class", "areaDay")
+	.attr("d", areaDay);
+
+    svg.append("path")
+	.datum(data)
+	.attr("class", "areaDusk")
+	.attr("d", areaDusk);
 
     svg.append("g")
 	.attr("class", "x axis")
