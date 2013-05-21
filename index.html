@@ -15,15 +15,16 @@ body {
 }
 
 .areaDawn {
-  fill: steelblue;
+  fill: #F26DCA;
+  stroke: #000;
 }
-
 .areaDay {
-  fill: yellow;
+  fill: #5C70FB;
+  stroke: #000;
 }
-
 .areaDusk {
-  fill: blue;
+  fill: #D43425;
+  stroke: #000;
 }
 
 </style>
@@ -58,7 +59,9 @@ var yAxis = d3.svg.axis()
 
 var areaDawn = d3.svg.area()
     .x(function(d) { return x(d.Date); })
+    .y0(height)
     .y1(function(d) { return y(d.Sunrise); });
+    // .y1(function(d) { return y(d.Sunrise); });
 
 var areaDay = d3.svg.area()
     .x(function(d) { return x(d.Date); })
@@ -111,9 +114,9 @@ d3.csv("times.csv", function(error, data) {
 	.append("text")
 	.attr("transform", "rotate(-90)")
 	.attr("y", 6)
-	.attr("dy", ".71em")
+	.attr("dy", "-5em")   	// move it one text point
 	.style("text-anchor", "end")
-	.text("Sunset/Sunrise time");
+	.text("Sunset / Sunrise time");
 });
 
 </script>
