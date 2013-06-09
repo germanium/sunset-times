@@ -2,12 +2,30 @@
 <meta charset="utf-8">
 <head>
   <link type="text/css" rel="stylesheet" href="/main.css" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  
   <title>Sunset/Sunrise times</title>
 </head>
 
 <body>
-  <script src="d3/d3.v3.js"></script>
-  <script src="/plot_sunsetsunrise.js"></script>
+  <div class="form">
+    <h2 class="form-signin-heading">Enter zip code</h2>
+    <input type="text" class="input-block-level" placeholder="Zip code">
+    <button class="btn btn-large btn-primary" type="submit">Submit</button>
+  </div>
+
+  <br>
+  <hr>
+
+  <div class="plot">
+    <script src="d3/d3.v3.js"></script>
+    <script src="/plot_sunsetsunrise.js"></script>
+  </div>
+  
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
 
 </body>

@@ -16,7 +16,7 @@
 //     .style"fill", color(9));
 
 
-var parseDate = d3.time.format("%m/%d/%y").parse;
+var parseDate = d3.time.format("%Y-%m-%d").parse;
 var parseHour = d3.time.format("%H:%M").parse;
 
 var margin = {top: 20, right: 30, bottom: 40, left: 80},
@@ -62,7 +62,7 @@ var svg = d3.select("body").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("test.csv", function(error, data){
+d3.csv("/crepyscule/data.csv", function(error, data){
     data.forEach( function(d) {
 	d.Date = parseDate(d.Date);
 	d.Sunrise = parseHour(d.Sunrise);	
