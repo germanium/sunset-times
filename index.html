@@ -32,8 +32,24 @@ body {
 <script src="d3/d3.v3.js"></script>
 <script>
 
-var parseDate = d3.time.format("%d-%b-%y").parse;
-var parseHour = d3.time.format("%I:%M %p").parse;
+// // Color shading 
+// var color = d3.scale.linear().domain([1,10]).range(['red', 'blue']);
+
+// var circle1 = svg.append(“circle”)
+//     .attr("cx", 50)
+//     .attr("cy", 100)
+//     .attr("r", 20)
+//     .style("fill", color(2));
+
+// var circle2 = svg.append("circle")
+//     .attr("cx", 50)
+//     .attr("cy", 100)
+//     .attr("r", 20)
+//     .style"fill", color(9));
+
+
+var parseDate = d3.time.format("%m/%d/%y").parse;
+var parseHour = d3.time.format("%H:%M").parse;
 
 var margin = {top: 20, right: 30, bottom: 40, left: 80},
 width = 960 - margin.left - margin.right,
@@ -78,7 +94,7 @@ var svg = d3.select("body").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("times.csv", function(error, data) {
+d3.csv("test.csv", function(error, data){
     data.forEach( function(d) {
 	d.Date = parseDate(d.Date);
 	d.Sunrise = parseHour(d.Sunrise);	
@@ -86,7 +102,7 @@ d3.csv("times.csv", function(error, data) {
     });
 
     x.domain(d3.extent(data, function(d) { return d.Date; }));
-    y.domain( [new Date(1900,0,1,0,0), new Date(1900,0,1,24,0)] );
+    y.domain( [new Date(0,0,1,0), new Date(0,0,1,24)] );
 
     svg.append("path")
 	.datum(data)
