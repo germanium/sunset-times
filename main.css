@@ -1,0 +1,24 @@
+body {
+  font: 12px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+  stroke-width: 2;
+}
+
+.areaDawn {
+  fill: #F26DCA;
+  stroke: #000;
+}
+.areaDay {
+  fill: #5C70FB;
+  stroke: #000;
+}
+.areaDusk {
+  fill: #D43425;
+  stroke: #000;
+}
