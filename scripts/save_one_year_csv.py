@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun  6 21:50:10 2013
 
-@author: gp
-"""
 
-#import crepyscule
+import time, sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), 'geopy', 'geocoders'))
+
 import crepyscule_tools
-import time 
-from pyzipcode import ZipCodeDatabase
+from geopy import geocoders
+import google_timezone
+# from pyzipcode import ZipCodeDatabase
 
 sFilename = 'data.csv'
 
@@ -17,15 +15,17 @@ t = time.strptime("6 Jun 2012", "%d %b %Y")
 ctime = time.mktime(t)
 
 # Find Lat Lon for given zip code
-zcdb = ZipCodeDatabase()
-zipcode = zcdb[60202]
-fLon = zipcode.longitude
-fLat = zipcode.latitude
-fUTC = zipcode.timezone
-
+g = geocoders.GoogleV3()
+place, (fLat, fLon) = g.geocode("750 Hinman Ave, Evanston")
+print "%s: %.5f, %.5f" % (place, fLat, fLon)
+g2 = google_timezone.GoogleTimezone()
+fUTC = g2.geocode(fLat,fLon)/(60**2)
 sDLS = 'US'
-# Find zip for given city
-zipcode = zcdb.find_zip(city="Evanston")
+# zcdb = ZipCodeDatabase()
+# zipcode = zcdb[60202]
+# fLon = zipcode.longitude
+# fLat = zipcode.latitude
+# fUTC = zipcode.timezone
 
 (lSunrise, lSunset, lSunAltitude, tToday) = \
     crepyscule_tools.get_one_year_data(fLat, fLon, ctime, fUTC, sDLS)

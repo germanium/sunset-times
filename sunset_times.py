@@ -1,36 +1,31 @@
 
-import os, sys
-# sys.path.append("/Library/Python/2.7/site-packages")
-print sys.path
+import os, sys, time 
 import webapp2
 import jinja2
 import numpy
 
+sys.path.append(os.path.join(os.path.dirname(__file__), 'scripts'))
+from scripts import crepyscule_tools
+from scripts.geopy import geocoders
+from scripts.geopy.geocoders import google_timezone
 
-# sys.path.append(os.path.join(os.path.dirname(__file__), 'scripts', 'crepyscule'))
-# from scripts import crepyscule_tools
-import crepyscule_tools
-import time 
-from pyzipcode import ZipCodeDatabase
-
-
-from google.appengine.ext import db
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
 								autoescape = True)
 
 def save_one_year_data(zipcode):
+	sFilename = 'data.csv'
 	# Define day in year of result
 	t = time.strptime("6 Jun 2012", "%d %b %Y")   
 	ctime = time.mktime(t)
 
 	# Find Lat Lon for given zip code
-	zcdb = ZipCodeDatabase()
-	zcdbUser = zcdb[zipcode]
-	fLon = zcdbUser.longitude
-	fLat = zcdbUser.latitude
-	fUTC = zcdbUser.timezone
+	g = geocoders.GoogleV3()
+	place, (fLat, fLon) = g.geocode("750 Hinman Ave, Evanston")
+	print "%s: %.5f, %.5f" % (place, fLat, fLon)
+	g2 = google_timezone.GoogleTimezone()
+	fUTC = g2.geocode(fLat, fLon)/(60**2)
 	sDLS = 'US'
 
 	(lSunrise, lSunset, lSunAltitude, tToday) = \
@@ -67,6 +62,7 @@ class MainPage(Handler):
 
 		if zipcode:
 			# self.response.out.write('hola')
+			save_one_year_data(zipcode)
 			errorID = "control-group success"
 			self.render_front(zipcode, errorID=errorID)
 		else:
