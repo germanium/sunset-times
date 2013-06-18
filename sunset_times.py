@@ -1,5 +1,5 @@
 
-import os, sys, time 
+import os, sys, time, csv, json
 import webapp2
 import jinja2
 import numpy
@@ -14,7 +14,7 @@ template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
 								autoescape = True)
 
-def save_one_year_data(zipcode):
+def getOneYearData(zipcode):
 	sFilename = 'data.csv'
 	# Define day in year of result
 	t = time.strptime("6 Jun 2012", "%d %b %Y")   
@@ -22,8 +22,9 @@ def save_one_year_data(zipcode):
 
 	# Find Lat Lon for given zip code
 	g = geocoders.GoogleV3()
-	place, (fLat, fLon) = g.geocode("750 Hinman Ave, Evanston")
+	place, (fLat, fLon) = g.geocode(zipcode)
 	print "%s: %.5f, %.5f" % (place, fLat, fLon)
+
 	g2 = google_timezone.GoogleTimezone()
 	fUTC = g2.geocode(fLat, fLon)/(60**2)
 	sDLS = 'US'
@@ -34,9 +35,15 @@ def save_one_year_data(zipcode):
 	lDaylength = crepyscule_tools.get_daylength(ctime, fLat, fLon)
 	lDateISO8601 = crepyscule_tools.get_one_year_of_iso8601(ctime)
                                                  
-	crepyscule_tools.save_info_flat_file(sFilename, lDateISO8601,\
-                                    	lSunrise, lSunset, lDaylength,\
-                                    	fLat, fLon, fUTC, sDLS)
+	lLines = crepyscule_tools.get_sunrise_sunset_as_csv(lDateISO8601, lSunrise,\
+                                        lSunset, lDaylength,\
+                                        fLat, fLon, fUTC, sDLS)
+
+	reader = csv.DictReader(lLines)
+	# Parse the CSV into JSON  
+	JSONout = json.dumps( [ row for row in reader ] )
+	return JSONout  
+
 
 class Handler(webapp2.RequestHandler):
 	def write(self, *a, **kw):
@@ -51,8 +58,9 @@ class Handler(webapp2.RequestHandler):
 
 
 class MainPage(Handler):
-	def render_front(self, zipcode="", error="", errorID="control-group"):
-		self.render("index.html", zipcode=zipcode, error=error, errorID=errorID)
+	def render_front(self, zipcode="", error="", errorID="control-group", JSONdata=""):
+		self.render("index.html", zipcode=zipcode, error=error, errorID=errorID, 
+					JSONdata=JSONdata)
 
 	def get(self):
 		self.render_front()
@@ -62,9 +70,9 @@ class MainPage(Handler):
 
 		if zipcode:
 			# self.response.out.write('hola')
-			save_one_year_data(zipcode)
+			JSONdata = getOneYearData(zipcode)
 			errorID = "control-group success"
-			self.render_front(zipcode, errorID=errorID)
+			self.render_front(zipcode, errorID=errorID, JSONdata=JSONdata)
 		else:
 			error = "I can't find that zip code, try again"
 			errorID = "control-group error"

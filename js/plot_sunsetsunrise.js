@@ -15,6 +15,7 @@
 //     .attr("r", 20)
 //     .style"fill", color(9));
 
+// var dataJSON = JSON.parse(JSONstr);
 
 var parseDate = d3.time.format("%Y-%m-%d").parse;
 var parseHour = d3.time.format("%H:%M").parse;
@@ -62,28 +63,29 @@ var svg = d3.select("body").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("scripts/data.csv", function(error, data){
-    data.forEach( function(d) {
+// d3.csv("scripts/data.csv", function(error, data){
+dataJSON = JSON.parse(JSONstr);
+    dataJSON.forEach( function(d) {
 	d.Date = parseDate(d.Date);
 	d.Sunrise = parseHour(d.Sunrise);	
 	d.Sunset = parseHour(d.Sunset);
     });
 
-    x.domain(d3.extent(data, function(d) { return d.Date; }));
+    x.domain(d3.extent(dataJSON, function(d) { return d.Date; }));
     y.domain( [new Date(0,0,1,0), new Date(0,0,1,24)] );
 
     svg.append("path")
-	.datum(data)
+	.datum(dataJSON)
 	.attr("class", "areaDawn")
 	.attr("d", areaDawn);
 
     svg.append("path")
-	.datum(data)
+	.datum(dataJSON)
 	.attr("class", "areaDay")
 	.attr("d", areaDay);
 
     svg.append("path")
-	.datum(data)
+	.datum(dataJSON)
 	.attr("class", "areaDusk")
 	.attr("d", areaDusk);
 
@@ -101,4 +103,4 @@ d3.csv("scripts/data.csv", function(error, data){
 	.attr("dy", "-5em")   	// move it one text point
 	.style("text-anchor", "end")
 	.text("Sunset / Sunrise time");
-});
+// });
