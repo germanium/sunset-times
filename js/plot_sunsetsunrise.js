@@ -15,12 +15,10 @@
 //     .attr("r", 20)
 //     .style"fill", color(9));
 
-// var dataJSON = JSON.parse(JSONstr);
-
 var parseDate = d3.time.format("%Y-%m-%d").parse;
 var parseHour = d3.time.format("%H:%M").parse;
 
-var margin = {top: 20, right: 30, bottom: 40, left: 80},
+var margin = {top: 20, right: 30, bottom: 40, left: 100},
 width = 960 - margin.left - margin.right,
 height = 500 - margin.top - margin.bottom;
 

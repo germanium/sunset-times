@@ -1,6 +1,6 @@
-body {
+/*body {
   font: 12px sans-serif;
-}
+}*/
 
 .axis path,
 .axis line {
@@ -23,8 +23,7 @@ body {
   stroke: #000;
 }
 
-/*input[type=text] {
-    font-size: 20px;
-    padding: 2px;
-    font-family: monospace;
-}*/
+.axis text {
+        font-family: sans-serif;
+        font-size: 16px;
+}    

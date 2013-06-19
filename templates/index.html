@@ -13,15 +13,17 @@
 <body>
   <form method="post"/>
   <div class="hero-unit">
-    <h1>Sunset/Sunrise times</h1>
+    <a href="/" style="text-decoration: none">
+      <h1>Sunset/Sunrise times</h1>
+    </a>
     <br>
-    <h2>Enter zip code</h2>
+    <h2>Enter location</h2>
 
     <!-- errorID = ""control-group success"", or "" -->
     <div class="{{errorID}}">
       <div class="controls">
-        <input type="text" class="input-small"  name="zipcode" value="{{zipcode}}" placeholder="Zip code">
-        <span class="help-inline">{{error}}</span>
+        <input type="text" class="input-xlarge"  name="location" value="{{location}}" placeholder="new york">
+        <span class="help-inline">{{msg}}</span>
       </div>
     </div>
     

@@ -14,20 +14,29 @@ template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
 								autoescape = True)
 
-def getOneYearData(zipcode):
-	sFilename = 'data.csv'
+def getOneYearData(location):
+	""" If location is found returns one year of JSON data, else returns None  """
+
 	# Define day in year of result
 	t = time.strptime("6 Jun 2012", "%d %b %Y")   
 	ctime = time.mktime(t)
 
 	# Find Lat Lon for given zip code
 	g = geocoders.GoogleV3()
-	place, (fLat, fLon) = g.geocode(zipcode)
-	print "%s: %.5f, %.5f" % (place, fLat, fLon)
+	try:
+		locations = g.geocode(location, exactly_one=False)
+		# place, (fLat, fLon) = g.geocode(location, exactly_one=False)
+	except:
+		return (None, None)
+	
+	# Get the first result. I can improve it to display all results					
+	place = locations[0][0]
+	fLat = locations[0][1][0]
+	fLon = locations[0][1][1]
 
 	g2 = google_timezone.GoogleTimezone()
 	fUTC = g2.geocode(fLat, fLon)/(60**2)
-	sDLS = 'US'
+	sDLS = '' #US'
 
 	(lSunrise, lSunset, lSunAltitude, tToday) = \
     	crepyscule_tools.get_one_year_data(fLat, fLon, ctime, fUTC, sDLS)
@@ -42,7 +51,7 @@ def getOneYearData(zipcode):
 	reader = csv.DictReader(lLines)
 	# Parse the CSV into JSON  
 	JSONout = json.dumps( [ row for row in reader ] )
-	return JSONout  
+	return (JSONout, place)
 
 
 class Handler(webapp2.RequestHandler):
@@ -58,25 +67,25 @@ class Handler(webapp2.RequestHandler):
 
 
 class MainPage(Handler):
-	def render_front(self, zipcode="", error="", errorID="control-group", JSONdata=""):
-		self.render("index.html", zipcode=zipcode, error=error, errorID=errorID, 
+	def render_front(self, location="", msg="", errorID="control-group", JSONdata=""):
+		self.render("index.html", location=location, msg=msg, errorID=errorID, 
 					JSONdata=JSONdata)
 
 	def get(self):
 		self.render_front()
 
 	def post(self):
-		zipcode = self.request.get("zipcode")
+		location = self.request.get("location")
+		JSONdata, place = getOneYearData(location)
 
-		if zipcode:
-			# self.response.out.write('hola')
-			JSONdata = getOneYearData(zipcode)
+		if JSONdata:
 			errorID = "control-group success"
-			self.render_front(zipcode, errorID=errorID, JSONdata=JSONdata)
+			self.render_front(location, place, errorID, JSONdata)
 		else:
-			error = "I can't find that zip code, try again"
+			msg= "Can't find that location, try again"
 			errorID = "control-group error"
-			self.render_front(error=error, errorID=errorID)
-			# self.render_front(zipcode, error)
+			self.render_front(location=location, msg=msg, errorID=errorID)
 
 app = webapp2.WSGIApplication([('/', MainPage)], debug=True)
+
+

@@ -1,11 +1,11 @@
 
 
 import time, sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), 'geopy', 'geocoders'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'geopy'))
 
 import crepyscule_tools
 from geopy import geocoders
-import google_timezone
+from geopy.geocoders import google_timezone
 # from pyzipcode import ZipCodeDatabase
 
 sFilename = 'data.csv'
@@ -16,8 +16,12 @@ ctime = time.mktime(t)
 
 # Find Lat Lon for given zip code
 g = geocoders.GoogleV3()
-place, (fLat, fLon) = g.geocode("750 Hinman Ave, Evanston")
-print "%s: %.5f, %.5f" % (place, fLat, fLon)
+locations = g.geocode("Moscow", exactly_one=False)
+place = locations[0][0]
+fLat = locations[0][1][0]
+fLon = locations[0][1][1]
+print "First location found: %s: %.5f, %.5f" % (place, fLat, fLon)
+
 g2 = google_timezone.GoogleTimezone()
 fUTC = g2.geocode(fLat,fLon)/(60**2) # From seconds to hours
 sDLS = 'US'
@@ -49,6 +53,7 @@ crepyscule_tools.save_info_flat_file(sFilename, lDateISO8601,\
 # CSV to JSON
 import csv  
 import json  
+from google.appengine.ext import db
   
 # Open the CSV  
 #f = open( sFilename, 'rU' )  
@@ -56,39 +61,28 @@ import json
 #reader = csv.DictReader( f, fieldnames = ( "date","sunrise","sunset", "daylength" ))  
 reader = csv.DictReader(lLines)
 # Parse the CSV into JSON  
-out = json.dumps( [ row for row in reader ] )  
+JSONout = json.dumps( [ row for row in reader ] )  
 print "JSON parsed!"  
 # Save the JSON  
 f = open( 'data.json', 'w')  
-f.write(out)  
+f.write(JSONout)  
 print "JSON saved!"  
 
 
 
 
-class InnerClass(db.Model):
+class SunsetSunrise(db.Model):
     jsonText = db.TextProperty()
         
-class Wrapper:
-    def __init__(self, storage=None):
-        self.storage = storage
-        self.json = None
-        if storage is not None:
-            self.json = fromJsonString(storage.jsonText)
-    def put(self):
-        jsonText  = ToJsonString(self.json)
-        if self.storage is None:
-            self.storage = InnerClass()
-        self.storage.jsonText = jsonText
-        self.storage.put()
-        
+sunset = SunsetSunrise(jsonText = JSONout)
+sunset.put()
+
 def getall():
-    all = db.GqlQuery("SELECT * FROM InnerClass")
+    all = db.GqlQuery("SELECT * FROM SunsetSunrise")
     for x in all:
-        yield x.parse()
+        print x.jsonText
         
         
-import json
 class JSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if hasattr(obj, 'isoformat'): #handles both date and datetime objects
