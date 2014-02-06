@@ -18,7 +18,7 @@ def getOneYearData(location):
 	""" If location is found returns one year of JSON data, else returns None  """
 
 	# Define day in year of result
-	t = time.strptime("6 Jun 2012", "%d %b %Y")   
+	t = time.strptime("6 Jun 2014", "%d %b %Y")   
 	ctime = time.mktime(t)
 
 	# Find Lat Lon for given zip code

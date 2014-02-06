@@ -11,15 +11,21 @@
 }
 
 .areaDawn {
-  fill: #F26DCA;
+  fill: #F26DCA;    /*redish*/
+  /*fill: #F42CFE; */  /*pink*/
+  /*fill: #2C2C2C;*/
   stroke: #000;
 }
 .areaDay {
-  fill: #5C70FB;
+  /*fill: #167488;*/
+  /*fill: #41A6D8;*/
+  fill: #5C70FB;   /*blue*/
   stroke: #000;
 }
 .areaDusk {
-  fill: #D43425;
+  fill: #D43425;        /*pinkish*/
+  /*fill: #F42CFE;*/    /*pink*/
+  /*fill: #2C2C2C;*/    /*Dark */
   stroke: #000;
 }
 

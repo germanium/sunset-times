@@ -4,7 +4,7 @@
 <head>
   <link type="text/css" rel="stylesheet" href="/static/main.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap -->
+  <!-- Bootstrap -->
   <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
   
   <title>Sunset/Sunrise times</title>
@@ -22,24 +22,25 @@
     <!-- errorID = ""control-group success"", or "" -->
     <div class="{{errorID}}">
       <div class="controls">
-        <input type="text" class="input-xlarge"  name="location" value="{{location}}" placeholder="new york">
+        <input type="text" class="input-xlarge"  name="location" value="{{location}}" placeholder="chicago">
         <span class="help-inline">{{msg}}</span>
       </div>
     </div>
     
     <button class="btn btn-large btn-primary" type="submit">Submit</a>
-  </div>
+    </div>
 
-  <div class="plot">
-    <script src="/d3/d3.v3.js"></script>
-    <script type="text/javascript">
-      var JSONstr = '{{JSONdata|safe}}'
-    </script> 
-    <script src="/js/plot_sunsetsunrise.js"></script>
-  </div>
+    <div class="plot">
+      <script src="/d3/d3.v3.js"></script>
+      <script type="text/javascript">
+        var JSONstr = '{{JSONdata|safe}}'
+      </script> 
+      <script src="/js/plot_sunsetsunrise.js"></script>
+    </div>
+    
   </form> 
 
-    <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
+  <script src="http://code.jquery.com/jquery.js"></script>
+  <script src="/bootstrap/js/bootstrap.min.js"></script>
 
 </body>
