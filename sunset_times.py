@@ -1,8 +1,6 @@
-
 import os, sys, time, csv, json
 import webapp2
 import jinja2
-import numpy
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'scripts'))
 from scripts import crepyscule_tools
@@ -24,15 +22,15 @@ def getOneYearData(location):
 	# Find Lat Lon for given zip code
 	g = geocoders.GoogleV3()
 	try:
-		locations = g.geocode(location, exactly_one=False)
+		locations = g.geocode(location)
 		# place, (fLat, fLon) = g.geocode(location, exactly_one=False)
 	except:
 		return (None, None)
 	
 	# Get the first result. I can improve it to display all results					
-	place = locations[0][0]
-	fLat = locations[0][1][0]
-	fLon = locations[0][1][1]
+	place = locations[0]
+	fLat = locations[1][0]
+	fLon = locations[1][1]
 
 	g2 = google_timezone.GoogleTimezone()
 	fUTC = g2.geocode(fLat, fLon)/(60**2)
@@ -82,7 +80,7 @@ class MainPage(Handler):
 			errorID = "control-group success"
 			self.render_front(location, place, errorID, JSONdata)
 		else:
-			msg= "Can't find that location, try again"
+			msg= "I can't find that location. API might be down, try again later"
 			errorID = "control-group error"
 			self.render_front(location=location, msg=msg, errorID=errorID)
 
