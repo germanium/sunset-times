@@ -1,0 +1,34 @@
+application: sunset-times
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /static
+  static_dir: static
+
+- url: /d3
+  static_dir: d3
+
+# - url: /scripts
+#   static_dir: scripts
+
+- url: /js
+  static_dir: js
+
+- url: /bootstrap
+  static_dir: bootstrap
+
+- url: /.*
+  script: sunset_times.app
+
+libraries:
+- name: webapp2
+  version: "2.5.1" 
+- name: jinja2 
+  version: latest
+- name: markupsafe 
+  version: latest
+- name: numpy
+  version: "latest"
